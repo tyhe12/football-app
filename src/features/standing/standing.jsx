@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -15,11 +15,13 @@ import Card from 'react-bootstrap/Card'
 
 export function Standing({ league, history }) {
   const dispatch = useDispatch()
-  const table = useSelector(selectTables)[league]
+  const tables = useSelector(selectTables)
   const ready = useSelector(selectReady)
+  const table = useMemo(() => tables[league], [tables, league])
 
   useEffect(() => {
-    dispatch(fetchTable(league))
+    if (!table)
+      dispatch(fetchTable(league))
   }, [])
 
   const onClickRow = team => () => {
@@ -48,7 +50,7 @@ export function Standing({ league, history }) {
       
       <tbody>
       {
-        ready && 
+        ready && table &&
         table.map(team => {
           return (
             <tr onClick={onClickRow(team.team_id)} key={team.team_id}>

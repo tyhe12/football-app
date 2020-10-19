@@ -5,8 +5,8 @@ export const standingSlice = createSlice({
   name: 'standing',
   initialState: {
     tables: {
-      english: [],
-      french: []
+      english: null,
+      french: null
     },
     ready: false
   },

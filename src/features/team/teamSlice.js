@@ -9,8 +9,9 @@ export const teamSlice = createSlice({
   },
   reducers: {
     addTeam: (state, { payload }) => {
-      const { team } = payload
-      state.teams.push(team)
+      const { team_id: id } = payload
+      if (state.teams.findIndex(t => t.team_id === id) < 0)
+        state.teams.push(payload)
     },
     setReady: state => {
       state.ready = true
@@ -31,7 +32,7 @@ export const fetchTeam = teamId => async dispatch => {
     REACT_APP_API_HEADER_KEY 
   } = process.env
   
-  const { data } = await axios({
+  const { data: teamData } = await axios({
     method: 'get',
     url: `${REACT_APP_API_URL}/teams/team/${teamId}`,
     headers: {
@@ -40,15 +41,27 @@ export const fetchTeam = teamId => async dispatch => {
     }
   })
 
-  const { teams } = data.api.results.
+  const { data: squadData } = await axios({
+    method: 'get',
+    url: `${REACT_APP_API_URL}/players/squad/${teamId}/2020-2021`,
+    headers: {
+      'x-rapidapi-host': REACT_APP_API_HEADER_HOST,
+      'x-rapidapi-key': REACT_APP_API_HEADER_KEY
+    }
+  })
+
+  const { teams } = teamData.api
+  const { players } = squadData.api
   dispatch(addTeam({
-    team: teams[0]
+    ...teams[0],
+    squad: players
   }))
+
   dispatch(setReady())
 }
 
 export const selectTeams = state => state.team.teams
 export const selectTeamById = id => state => state.team.teams.filter(t => t.team_id === id)[0]
-export const selectReady = state => state.standing.ready
+export const selectReady = state => state.team.ready
 
 export default teamSlice.reducer;
