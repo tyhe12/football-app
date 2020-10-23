@@ -17,7 +17,7 @@ export function Standing({ league, history }) {
   const dispatch = useDispatch()
   const tables = useSelector(selectTables)
   const ready = useSelector(selectReady)
-  const table = useMemo(() => tables[league], [tables, league])
+  const table = ready ? tables[league] : null
 
   useEffect(() => {
     if (!table)

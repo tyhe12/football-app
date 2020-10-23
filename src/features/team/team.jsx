@@ -13,13 +13,15 @@ export default function TeamInfo({ id }) {
   const ready = useSelector(selectReady)
   const teams = useSelector(selectTeams)
   
-  const team = useMemo(() => {
-    const idNum = parseInt(id)
-    if (ready) {
-      const team = teams.find(t => t.team_id === idNum)
-      return team
-    }
-  }, [teams, ready, id])
+  // const team = useMemo(() => {
+  //   const idNum = parseInt(id)
+  //   if (ready) {
+  //     const team = teams.find(t => t.team_id === idNum)
+  //     return team
+  //   }
+  // }, [teams, ready, id])
+  const idNum = parseInt(id)
+  const team = ready ? teams.find(t => t.team_id === idNum) : null
   
   useEffect(() => {
     if (!team)
